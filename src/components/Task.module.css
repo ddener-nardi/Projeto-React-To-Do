@@ -5,9 +5,14 @@
 
     display: flex;
     align-items: flex-start;
+    justify-content: space-between;
     gap: .9rem;
 }
-
+.description {
+    display: flex;
+    align-items: center;
+    gap: .9rem;
+}
 .rounded__Checkbox{
     appearance: none;
     border: 2px solid var(--blue-300);
