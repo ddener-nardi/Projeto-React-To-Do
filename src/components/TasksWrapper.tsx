@@ -7,6 +7,7 @@ export interface Task {
     id: number;
     content: string;
     isDone: boolean;
+    isDeleted: boolean;
 }
 
 export const tasks: Task[] = [
@@ -14,16 +15,19 @@ export const tasks: Task[] = [
         id:1,
         content: "Aula de ReactJs",
         isDone: false,
+        isDeleted: false,
     },
     {
         id: 2,
         content: "Aula de NodeJs",
         isDone: false,
+        isDeleted: false
     },
     {
         id: 3,
         content: "Aula de Banco de Dados",
         isDone: true,
+        isDeleted: false
     }
 ]
 
@@ -39,6 +43,7 @@ export function TasksWrapper(){
             id: task.length + 1,
             content: newTaskContent,
             isDone: false,
+            isDeleted: false
         }
 
         setTask([ ...task, newTask ]);
@@ -49,6 +54,17 @@ export function TasksWrapper(){
         
         event.target.setCustomValidity('');
         setNewTaskContent(event.target.value);
+    }
+
+    const deleteTask = (taskToDelete: Task) => {
+        taskToDelete.isDeleted = true;
+        const tasksWithoutDelete = tasks.filter(task => {
+            return task.isDeleted != true;
+        })
+
+        
+
+        setTask(tasksWithoutDelete)
     }
 
     const isCommentValueInvalid = (event:InvalidEvent<HTMLInputElement>) => {
@@ -94,6 +110,7 @@ export function TasksWrapper(){
                             <TaskToDo 
                                 key={taskInner.id}
                                 task={taskInner}
+                                onDeleteTask={deleteTask}
                             />
                         )
                     })
