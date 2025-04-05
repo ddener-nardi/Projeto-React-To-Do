@@ -26,15 +26,18 @@ export const tasks: Task[] = [
     {
         id: 3,
         content: "Aula de Banco de Dados",
-        isDone: true,
+        isDone: false,
         isDeleted: false
     }
 ]
 
 export function TasksWrapper(){
-    const [ task, setTask ] = useState<Task[]>(tasks)
+    const [ task, setTask ] = useState<Task[]>(tasks);
 
-    const [ newTaskContent, setNewTaskContent ] = useState<string>('')
+    const [ newTaskContent, setNewTaskContent ] = useState<string>('');
+
+    const [ taskChecked, setTaskChecked ] = useState(0);
+
 
     const handleSubmitTask = (event: FormEvent) => {
         event.preventDefault();
@@ -54,15 +57,15 @@ export function TasksWrapper(){
         
         event.target.setCustomValidity('');
         setNewTaskContent(event.target.value);
+        console.log(task);
     }
 
     const deleteTask = (taskToDelete: Task) => {
         taskToDelete.isDeleted = true;
-        const tasksWithoutDelete = tasks.filter(task => {
+        console.log(task);
+        const tasksWithoutDelete = task.filter(task => {
             return task.isDeleted != true;
         })
-
-        
 
         setTask(tasksWithoutDelete)
     }
@@ -72,6 +75,32 @@ export function TasksWrapper(){
     }
 
     const isEmpty = newTaskContent.length === 0;
+
+    const changeTask = (taskDone: Task) => {
+        if(taskDone.isDone && !taskDone.isDeleted) {
+            setTaskChecked((state)=> {
+                return state + 1;
+            });
+        } 
+        if (taskDone.isDone && taskDone.isDeleted)
+        {
+            setTaskChecked((state)=> {
+                return state - 1;
+            });
+        }
+        if(!taskDone.isDone){
+            setTaskChecked((state)=> {
+                return state - 1;
+            });
+        }
+    }
+
+    const orderedTask = [...task].sort((a, b) => {
+        return  Number((a.isDone === true)) - Number((b.isDone === true));
+    })
+
+    const doneTask = task.filter(innerTask => innerTask.isDone === true);
+
     return (
         <>
         <div className={styles.form__Wrapper}>
@@ -100,17 +129,21 @@ export function TasksWrapper(){
                 <div
                     className={styles.conclude_tasks}
                 >
-                    Concluídas <span>2 de {task.length}</span>
+                    Concluídas <span>
+                        {
+                            doneTask.length
+                        } de {task.length}</span>
                 </div>
             </header>
             <div className={styles.tasks__Container}>
                 {
-                    task.map((taskInner) => {
+                    orderedTask.map((taskInner) => {
                         return(
                             <TaskToDo 
                                 key={taskInner.id}
                                 task={taskInner}
                                 onDeleteTask={deleteTask}
+                                onChangeTask={changeTask}
                             />
                         )
                     })
